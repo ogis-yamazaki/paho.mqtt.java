@@ -33,15 +33,13 @@ import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
  */
 public class MemoryPersistence implements MqttClientPersistence {
 
-	private Hashtable<String, MqttPersistable> data;
+	private Hashtable<String, MqttPersistable> data = new Hashtable<String, MqttPersistable>();
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.paho.client.mqttv3.MqttClientPersistence#close()
 	 */
 	public void close() throws MqttPersistenceException {
-		if (data != null) {
-			data.clear();
-		}	
+
 	}
 
 	/* (non-Javadoc)
@@ -64,7 +62,7 @@ public class MemoryPersistence implements MqttClientPersistence {
 	 * @see org.eclipse.paho.client.mqttv3.MqttClientPersistence#open(java.lang.String, java.lang.String)
 	 */
 	public void open(String clientId, String serverURI) throws MqttPersistenceException {
-		this.data = new Hashtable<String, MqttPersistable>();
+
 	}
 
 	/* (non-Javadoc)
