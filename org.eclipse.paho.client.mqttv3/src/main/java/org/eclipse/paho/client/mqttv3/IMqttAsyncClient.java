@@ -894,4 +894,35 @@ public interface IMqttAsyncClient extends AutoCloseable {
 	 * @throws MqttException  if the client is not disconnected.
 	 */
 	public void close() throws MqttException;
+	
+
+    /**
+     * Sets the DisconnectedBufferOptions for this client
+     * 
+     * @param bufferOpts the {@link DisconnectedBufferOptions}
+     */
+    public void setBufferOpts(DisconnectedBufferOptions bufferOpts);
+
+    /**
+     * Returns the number of messages in the Disconnected Message Buffer
+     * 
+     * @return Count of messages in the buffer
+     */
+    public int getBufferedMessageCount();
+
+    /**
+     * Returns a message from the Disconnected Message Buffer
+     * 
+     * @param bufferIndex the index of the message to be retrieved.
+     * @return the message located at the bufferIndex
+     */
+    public MqttMessage getBufferedMessage(int bufferIndex);
+
+    /**
+     * Deletes a message from the Disconnected Message Buffer
+     * 
+     * @param bufferIndex the index of the message to be deleted.
+     */
+    public void deleteBufferedMessage(int bufferIndex);
+
 }
