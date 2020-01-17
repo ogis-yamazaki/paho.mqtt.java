@@ -2,13 +2,13 @@
  * Copyright (c) 2002, 2013 IBM Corp.
  *
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * and Eclipse Distribution License v1.0 which accompany this distribution. 
  *
  * The Eclipse Public License is available at 
- *    http://www.eclipse.org/legal/epl-v10.html
+ *    https://www.eclipse.org/legal/epl-2.0
  * and the Eclipse Distribution License is available at 
- *   http://www.eclipse.org/org/documents/edl-v10.php.
+ *   https://www.eclipse.org/org/documents/edl-v10.php
  *
  * Description: Controls and lays out the subscription panel on the main window
  *
@@ -55,7 +55,7 @@ public class SubPanel implements ActionListener {
 	private JCheckBox  receivedRetain;
 	private JTextArea receivedData;
 	private MQTTFrame mqttMgr = null;
-	private Integer[]  qos = { new Integer(0), new Integer(1), new Integer(2) };
+	private Integer[]  qos = { Integer.valueOf(0), Integer.valueOf(1), Integer.valueOf(2) };
 	private JComboBox qosList;
 	private boolean hexDisplay = true;
     private JLabel subLabel = null;
@@ -298,7 +298,7 @@ public class SubPanel implements ActionListener {
      	
      	// Store the data content in a buffer incase in needs to be written to a file
      	// If the data is binary reading it back from the receivedData field is not good enough
-     	fileContent = data;
+     	fileContent = data.clone();
      	
      	
      	// If the display was originally in hex then switch back to hex
@@ -331,22 +331,22 @@ public class SubPanel implements ActionListener {
     	
     	byte[] subBytes = subText.getBytes();
 
-    	for( int i=0; i<subBytes.length; i++ ) {
-    		int byteValue = subBytes[i];
+		for (int subByte : subBytes) {
+			int byteValue = subByte;
 
-            // Change the byte value from a signed to unsigned value
-            // e.g. A byte of value 0xAA is treated as -86 and displayed incorrectly as 0xFFFFFFAA
-            // Adding 256 to this value changes it to 170 which is displayed correctly as 0xAA
-    		if (byteValue < 0) {
-    			byteValue += 256;
-    		}	
+			// Change the byte value from a signed to unsigned value
+			// e.g. A byte of value 0xAA is treated as -86 and displayed incorrectly as 0xFFFFFFAA
+			// Adding 256 to this value changes it to 170 which is displayed correctly as 0xAA
+			if (byteValue < 0) {
+				byteValue += 256;
+			}
 
-    		if ( byteValue < 16 ) {
-        		hexText.append( "0" + Integer.toHexString(byteValue) );
-    		} else {
-        		hexText.append( Integer.toHexString(byteValue) );
-    		}		
-    	}	
+			if (byteValue < 16) {
+				hexText.append("0" + Integer.toHexString(byteValue));
+			} else {
+				hexText.append(Integer.toHexString(byteValue));
+			}
+		}
     	
         hexDisplay = true;
         subLabel.setText( PANEL_TITLE + " - hexadecimal display" );

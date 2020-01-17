@@ -2,13 +2,13 @@
  * Copyright (c) 2009, 2014 IBM Corp.
  *
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * and Eclipse Distribution License v1.0 which accompany this distribution. 
  *
  * The Eclipse Public License is available at 
- *    http://www.eclipse.org/legal/epl-v10.html
+ *    https://www.eclipse.org/legal/epl-2.0
  * and the Eclipse Distribution License is available at 
- *   http://www.eclipse.org/org/documents/edl-v10.php.
+ *   https://www.eclipse.org/org/documents/edl-v10.php
  *
  * Contributors:
  *    Dave Locke - initial API and implementation and/or initial documentation
@@ -24,7 +24,6 @@ import java.io.IOException;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
-
 /**
  * An on-the-wire representation of an MQTT SUBSCRIBE message.
  */
@@ -36,9 +35,12 @@ public class MqttSubscribe extends MqttWireMessage {
 	/**
 	 * Constructor for an on the wire MQTT subscribe message
 	 * 
-	 * @param info the info byte
-	 * @param data the data byte array
-	 * @throws IOException if an exception occurs whilst reading the input stream
+	 * @param info
+	 *            the info byte
+	 * @param data
+	 *            the data byte array
+	 * @throws IOException
+	 *             if an exception occurs whilst reading the input stream
 	 */
 	public MqttSubscribe(byte info, byte[] data) throws IOException {
 		super(MqttWireMessage.MESSAGE_TYPE_SUBSCRIBE);
@@ -63,21 +65,28 @@ public class MqttSubscribe extends MqttWireMessage {
 
 	/**
 	 * Constructor for an on the wire MQTT subscribe message
-	 * @param names - one or more topics to subscribe to 
-	 * @param qos - the max QoS that each each topic will be subscribed at 
+	 * 
+	 * @param names
+	 *            - one or more topics to subscribe to
+	 * @param qos
+	 *            - the max QoS that each each topic will be subscribed at
 	 */
 	public MqttSubscribe(String[] names, int[] qos) {
 		super(MqttWireMessage.MESSAGE_TYPE_SUBSCRIBE);
-		this.names = names;
-		this.qos = qos;
-		
-		if (names.length != qos.length) {
-		throw new IllegalArgumentException();
+		if (names == null || qos == null) {
+			throw new IllegalArgumentException();
 		}
+
+		this.names = names.clone();
+		this.qos = qos.clone();
+		if (this.names.length != this.qos.length) {
+			throw new IllegalArgumentException();
+		}
+
 		this.count = names.length;
-		
-		for (int i=0;i<qos.length;i++) {
-			MqttMessage.validateQos(qos[i]);
+
+		for (int qo : qos) {
+			MqttMessage.validateQos(qo);
 		}
 	}
 
@@ -105,11 +114,11 @@ public class MqttSubscribe extends MqttWireMessage {
 
 		return sb.toString();
 	}
-	
+
 	protected byte getMessageInfo() {
 		return (byte) (2 | (duplicate ? 8 : 0));
 	}
-	
+
 	protected byte[] getVariableHeader() throws MqttException {
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -121,13 +130,13 @@ public class MqttSubscribe extends MqttWireMessage {
 			throw new MqttException(ex);
 		}
 	}
-	
+
 	public byte[] getPayload() throws MqttException {
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			DataOutputStream dos = new DataOutputStream(baos);
-			for (int i=0; i<names.length; i++) {
-				encodeUTF8(dos,names[i]);
+			for (int i = 0; i < names.length; i++) {
+				encodeUTF8(dos, names[i]);
 				dos.writeByte(qos[i]);
 			}
 			dos.flush();
@@ -136,7 +145,7 @@ public class MqttSubscribe extends MqttWireMessage {
 			throw new MqttException(ex);
 		}
 	}
-	
+
 	public boolean isRetryable() {
 		return true;
 	}

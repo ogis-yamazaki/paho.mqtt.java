@@ -2,13 +2,13 @@
  * Copyright (c) 2009, 2014 IBM Corp.
  *
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * and Eclipse Distribution License v1.0 which accompany this distribution. 
  *
  * The Eclipse Public License is available at 
- *    http://www.eclipse.org/legal/epl-v10.html
+ *    https://www.eclipse.org/legal/epl-2.0
  * and the Eclipse Distribution License is available at 
- *   http://www.eclipse.org/org/documents/edl-v10.php.
+ *   https://www.eclipse.org/org/documents/edl-v10.php
  *
  * Contributors:
  *    Dave Locke - initial API and implementation and/or initial documentation
@@ -16,7 +16,6 @@
 package org.eclipse.paho.client.mqttv3.persist;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
@@ -113,6 +112,11 @@ public class MqttDefaultFilePersistence implements MqttClientPersistence {
 			}
 
 			try {
+				//If lock was previously acquired, release before requesting a new one
+				if(fileLock != null){
+					fileLock.release();
+				}
+
 				fileLock = new FileLock(clientDir, LOCK_FILENAME);
 	 		} catch (Exception e) {
 	 			// TODO - This shouldn't be here according to the interface
@@ -237,13 +241,13 @@ public class MqttDefaultFilePersistence implements MqttClientPersistence {
 	 * @return all of the persistent data from the persistence directory.
 	 * @throws MqttPersistenceException if an exception is thrown whilst getting the keys
 	 */
-	public Enumeration keys() throws MqttPersistenceException {
+	public Enumeration<String> keys() throws MqttPersistenceException {
 		checkIsOpen();
 		File[] files = getFiles();
-		Vector result = new Vector(files.length);
-		for (int i=0;i<files.length;i++) {
-			String filename = files[i].getName();
-			String key = filename.substring(0,filename.length()-MESSAGE_FILE_EXTENSION.length());
+		Vector<String> result = new Vector<String>(files.length);
+		for (File file : files) {
+			String filename = file.getName();
+			String key = filename.substring(0, filename.length() - MESSAGE_FILE_EXTENSION.length());
 			result.addElement(key);
 		}
 		return result.elements();
@@ -266,7 +270,7 @@ public class MqttDefaultFilePersistence implements MqttClientPersistence {
 	 * Identifies any backup files in the specified directory and restores them
 	 * to their original file. This will overwrite any existing file of the same
 	 * name. This is safe as a stray backup file will only exist if a problem
-	 * occured whilst writing to the original file.
+	 * occurred whilst writing to the original file.
 	 * @param dir The directory in which to scan and restore backups
 	 */
 	private void restoreBackups(File dir) throws MqttPersistenceException {
@@ -276,12 +280,12 @@ public class MqttDefaultFilePersistence implements MqttClientPersistence {
 			throw new MqttPersistenceException();
 		}
 
-		for (int i=0;i<files.length;i++) {
-			File originalFile = new File(dir,files[i].getName().substring(0,files[i].getName().length()-MESSAGE_BACKUP_FILE_EXTENSION.length()));
-			boolean result = files[i].renameTo(originalFile);
+		for (File file : files) {
+			File originalFile = new File(dir, file.getName().substring(0, file.getName().length() - MESSAGE_BACKUP_FILE_EXTENSION.length()));
+			boolean result = file.renameTo(originalFile);
 			if (!result) {
 				originalFile.delete();
-				files[i].renameTo(originalFile);
+				file.renameTo(originalFile);
 			}
 		}
 	}
@@ -295,8 +299,8 @@ public class MqttDefaultFilePersistence implements MqttClientPersistence {
 	public void clear() throws MqttPersistenceException {
 		checkIsOpen();
 		File[] files = getFiles();
-		for (int i=0; i<files.length; i++) {
-			files[i].delete();
+		for (File file : files) {
+			file.delete();
 		}
 		clientDir.delete();
 	}
