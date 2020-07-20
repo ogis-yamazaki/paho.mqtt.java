@@ -901,11 +901,7 @@ public interface IMqttAsyncClient extends AutoCloseable {
 	 *
 	 * @return Count of messages in the buffer
 	 */
-<<<<<<< HEAD
-    int getBufferedMessageCount();
-=======
 	int getBufferedMessageCount();
->>>>>>> Manual advance marge. (https://github.com/eclipse/paho.mqtt.java/pull/732)
 
 	/**
 	 * Returns a message from the Disconnected Message Buffer
@@ -914,11 +910,7 @@ public interface IMqttAsyncClient extends AutoCloseable {
 	 *            the index of the message to be retrieved.
 	 * @return the message located at the bufferIndex
 	 */
-<<<<<<< HEAD
-    MqttMessage getBufferedMessage(int bufferIndex);
-=======
 	MqttMessage getBufferedMessage(int bufferIndex);
->>>>>>> Manual advance marge. (https://github.com/eclipse/paho.mqtt.java/pull/732)
 
 	/**
 	 * Deletes a message from the Disconnected Message Buffer
@@ -926,11 +918,7 @@ public interface IMqttAsyncClient extends AutoCloseable {
 	 * @param bufferIndex
 	 *            the index of the message to be deleted.
 	 */
-<<<<<<< HEAD
-    void deleteBufferedMessage(int bufferIndex);
-=======
 	void deleteBufferedMessage(int bufferIndex);
->>>>>>> Manual advance marge. (https://github.com/eclipse/paho.mqtt.java/pull/732)
 
 	/**
 	 * Returns the current number of outgoing in-flight messages being sent by the
@@ -940,11 +928,7 @@ public interface IMqttAsyncClient extends AutoCloseable {
 	 *
 	 * @return the current number of in-flight messages.
 	 */
-<<<<<<< HEAD
-    int getInFlightMessageCount();
-=======
 	int getInFlightMessageCount();
->>>>>>> Manual advance marge. (https://github.com/eclipse/paho.mqtt.java/pull/732)
 
 	/**
 	 * Close the client
